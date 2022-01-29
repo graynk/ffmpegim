@@ -29,5 +29,5 @@ jobs:
           context: .
           pull: true
           push: true
-          tags: ghcr.io/graynk/imffmpeg:latest
+          tags: ghcr.io/graynk/ffmpegim:latest
           platforms: linux/amd64,linux/arm64
