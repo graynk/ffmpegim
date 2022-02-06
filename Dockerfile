@@ -16,6 +16,7 @@ ENV FFMPEG_VERSION=5.0 \
     VORBIS_VERSION=1.3.7 \
     WEBP_VERSION=1.2.2 \
     X264_VERSION=stable \
+    LIBVPX_VERSION=1.11.0 \
     LIBPNG_VERSION=1.6.37 \
     LIBJPEGTURBO_VERSION=2.1.2 \
     LIBLQR_VERSION=0.4.2 \
@@ -152,6 +153,17 @@ RUN \
     make install && \
     rm -rf ${DIR}
 
+## libvpx https://github.com/webmproject/libvpx
+RUN \
+    DIR=/tmp/libvpx && \
+    mkdir -p ${DIR} && \
+    cd ${DIR} && \
+    git clone https://github.com/webmproject/libvpx.git ${DIR} -b v${LIBVPX_VERSION} --depth 1 && \
+    cd build && \
+    ../configure --prefix="${PREFIX}" --enable-shared --enable-webm-io --enable-libyuv --disable-tools --disable-docs --disable-examples --disable-unit-tests --disable-vp8 --disable-dependency-tracking --disable-codec-srcs --disable-debug-libs && \
+    make install && \
+    rm -rf ${DIR}
+
 ## Build ffmpeg
 ## ffmpeg https://ffmpeg.org/
 RUN  \
@@ -171,6 +183,7 @@ RUN \
     --enable-libopus \
     --enable-libvorbis \
     --enable-libx264 \
+    --enable-libvpx \
     --enable-nonfree \
     --enable-libfdk_aac \
     --prefix="${PREFIX}" \
@@ -186,7 +199,7 @@ RUN \
 ## Additional IM deps. TODO: compile libjpeg-turbo as well
 ## libwebp https://developers.google.com/speed/webp/
 RUN \
-    DIR=/tmp/vebp && \
+    DIR=/tmp/webp && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
     curl -sLO https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${WEBP_VERSION}.tar.gz && \
@@ -195,7 +208,8 @@ RUN \
     ./configure --prefix="${PREFIX}" --enable-shared && \
     make && \
     make install && \
-    rm -rf ${DIR}
+    rm -rf ${DIR} \
+
 ## liblqr https://github.com/carlobaldassi/liblqr
 RUN \
     DIR=/tmp/liblqr && \
